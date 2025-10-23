@@ -1,8 +1,28 @@
 {
-    "rewrites": [
-        {
-            "source": "/",
-            "destination": "/client/Homepage.html"
-        }
-    ]
+  "rewrites": [
+    // 1. Quy tắc cũ: Chỉ trang chủ đến Homepage.html
+    {
+      "source": "/",
+      "destination": "/client/Homepage.html"
+    },
+
+    // 2. QUY TẮC MỚI: Chỉ các file tài nguyên (assets) của trang chủ
+    // (Bao gồm CSS, JS, và các ảnh bạn dùng)
+    {
+      "source": "/style.css",
+      "destination": "/client/style.css"
+    },
+    {
+      "source": "/script.js",
+      "destination": "/client/script.js"
+    },
+    {
+      "source": "/mybk.jpg",
+      "destination": "/client/mybk.jpg"
+    },
+    {
+      "source": "/lms.png",
+      "destination": "/client/lms.png"
+    }
+  ]
 }
