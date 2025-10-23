@@ -1,13 +1,12 @@
 {
   "rewrites": [
-    // 1. Quy tắc cũ: Chỉ trang chủ đến Homepage.html
+    
     {
       "source": "/",
       "destination": "/client/Homepage.html"
     },
 
-    // 2. QUY TẮC MỚI: Chỉ các file tài nguyên (assets) của trang chủ
-    // (Bao gồm CSS, JS, và các ảnh bạn dùng)
+    
     {
       "source": "/style.css",
       "destination": "/client/style.css"
