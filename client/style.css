@@ -1,0 +1,166 @@
+/* src/style.css */
+
+/* --- Cài đặt cơ bản --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    overflow: hidden;
+    /* Ngăn cuộn trang trên màn hình chính */
+}
+
+/* --- Container chính (Layout) --- */
+.main-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.panel {
+    flex: 1;
+    /* Mỗi panel chiếm 50% */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    height: 100%;
+
+    /* Cài đặt ảnh nền */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.panel-mybk {
+
+    background-image: url("mybk.jpg");
+}
+
+.panel-lms {
+
+    background-image: url("lms.png");
+}
+
+
+.content-box {
+    background-color: rgba(255, 255, 255, 0.75);
+    /* Màu trắng mờ */
+    backdrop-filter: blur(10px);
+    /* Hiệu ứng mờ nền */
+    -webkit-backdrop-filter: blur(10px);
+    /* Hỗ trợ Safari */
+    border-radius: 12px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 380px;
+}
+
+
+.content-box h2 {
+    font-size: 3.5rem;
+    /* 56px */
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.title-mybk {
+    color: #003366;
+
+}
+
+.title-lms {
+    color: #007BFF;
+
+}
+
+
+.btn {
+    display: inline-block;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    /* 17.6px */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.btn-mybk {
+    background-color: #003366;
+    /* Xanh đậm */
+}
+
+.btn-mybk:hover {
+    background-color: #002244;
+}
+
+.btn-lms {
+    background-color: #007BFF;
+    /* Xanh da trời */
+}
+
+.btn-lms:hover {
+    background-color: #0056b3;
+}
+
+/* --- Nút Đăng Ký (góc phải) --- */
+.btn-register {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    background-color: #003366;
+    /* Dùng màu xanh đậm */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-register:hover {
+    background-color: #002244;
+}
+
+/* --- Responsive cho điện thoại --- */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+
+    }
+
+    .panel {
+        flex: none;
+
+        width: 100%;
+        height: 50vh;
+
+    }
+
+    .content-box {
+        padding: 30px;
+    }
+
+    .content-box h2 {
+        font-size: 2.5rem;
+
+    }
+}
