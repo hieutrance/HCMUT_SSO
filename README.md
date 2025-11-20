@@ -30,7 +30,7 @@ BTL_MMANM/
 ### 📌 **Yêu cầu**
 - Python 3.x  
 - Flask  
-- Các thư viện có trong `requirements.txt` (nếu có)
+- Các thư viện cần thiết
 
 ### ▶️ **Khởi tạo môi trường ảo**
 ```
