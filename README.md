@@ -1,9 +1,9 @@
-SSO Simulation Project - HCMUT
+**SSO Simulation Project - HCMUT**
 
 A simulation of a Single Sign-On (SSO) system using the OpenID Connect (OIDC) protocol, built with Python Flask. This project demonstrates the interaction between a Service Provider (SP) and an Identity Provider (IdP) in a distributed environment.
 
 
-🌟 Features
+🌟 **Features**
 
 Distributed Architecture: Separate Client (SP) and SSO Server (IdP) applications running on different ports.
 
@@ -17,7 +17,7 @@ Responsive UI: Clean and modern user interface for Homepage, Login, and Register
 
 Dynamic Backgrounds: Login pages feature a slideshow background script.
 
-🏗️ Project Structure
+🏗️ **Project Structure**
 
 The project follows a microservices-like structure with two distinct Flask applications:
 
@@ -36,7 +36,8 @@ BTL_MMANM/
 └── README.md
 
 
-🚀 Getting Started
+
+🚀 **Getting Started**
 
 Follow these instructions to set up and run the project on your local machine.
 
@@ -93,7 +94,7 @@ python app.py
 # Running on http://localhost:5001
 
 
-🧪 How to Test
+🧪 **How to Test**
 
 Open your browser and go to http://localhost:5000 (Client Homepage).
 
@@ -111,7 +112,7 @@ The button will change to "Truy cập" (Access), and you can now access the LMS 
 
 Click "Đăng xuất" (Logout) to clear the session.
 
-🛠️ Technologies Used
+🛠️ **Technologies Used**
 
 Backend: Python, Flask
 
