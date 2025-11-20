@@ -6,36 +6,23 @@ Dự án gồm 2 phần ứng dụng chạy song song:
 
 ## 🚀 1. Cấu trúc thư mục
 
-<ul>
-<li><strong>BTL_MMANM/</strong>
-<ul>
-<li><code>.venv/</code> &nbsp; <em># Shared Virtual Environment</em></li>
-<li><strong>Client/</strong> &nbsp; <em># Service Provider (Runs on Port 5000)</em>
-<ul>
-<li><code>app.py</code> &nbsp; <em># Client logic (LMS, MyBK services)</em></li>
-<li><strong>static/</strong> &nbsp; <em># Client assets (CSS, JS, Images)</em></li>
-<li><strong>templates/</strong>
-<ul>
-<li><strong>client/</strong> &nbsp; <em># Client HTML pages</em></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>SSO_Server/</strong> &nbsp; <em># Identity Provider (Runs on Port 5001)</em>
-<ul>
-<li><code>app.py</code> &nbsp; <em># SSO logic (Login, Auth)</em></li>
-<li><strong>static/</strong> &nbsp; <em># Server assets</em></li>
-<li><strong>templates/</strong>
-<ul>
-<li><strong>sso_server/</strong> &nbsp; <em># Server HTML pages</em></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>README.md</code></li>
-</ul>
-</li>
-</ul>
+<pre>
+BTL_MMANM/
+├── .venv/                      # Shared Virtual Environment
+├── Client/                     # Service Provider (Runs on Port 5000)
+│   ├── app.py                  # Client logic (LMS, MyBK services)
+│   ├── static/                 # Client assets (CSS, JS, Images)
+│   └── templates/
+│       └── client/             # Client HTML pages
+├── SSO_Server/                 # Identity Provider (Runs on Port 5001)
+│   ├── app.py                  # SSO logic (Login, Auth)
+│   ├── static/                 # Server assets
+│   └── templates/
+│       └── sso_server/         # Server HTML pages
+└── README.md
+</pre>
+
+
 
 ## ⚙️ 2. Cách chạy dự án
 
