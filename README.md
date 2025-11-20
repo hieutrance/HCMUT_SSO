@@ -21,6 +21,7 @@ Dynamic Backgrounds: Login pages feature a slideshow background script.
 
 The project follows a microservices-like structure with two distinct Flask applications:
 
+pre>
 BTL_MMANM/
 ├── .venv/                      # Shared Virtual Environment
 ├── Client/                     # Service Provider (Runs on Port 5000)
@@ -34,6 +35,7 @@ BTL_MMANM/
 │   └── templates/
 │       └── sso_server/         # Server HTML pages
 └── README.md
+</pre>
 
 
 
@@ -41,13 +43,13 @@ BTL_MMANM/
 
 Follow these instructions to set up and run the project on your local machine.
 
-Prerequisites
+_Prerequisites_
 
 Python 3.x installed.
 
 pip (Python package installer).
 
-Installation
+_Installation_
 
 Clone the repository:
 
@@ -55,62 +57,42 @@ git clone https://github.com/hieutrance/HCMUT_SSO.git
 cd BTL_MMANM
 
 
-Create and Activate Virtual Environment:
+_Create and Activate Virtual Environment:_
 
-Windows (PowerShell):
+**Windows (PowerShell):**
 
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate
 
 
-Linux/macOS:
+**Linux/macOS:**
 
 python3 -m venv .venv
 source .venv/bin/activate
 
 
-Install Dependencies:
+_Install Dependencies:_
 
 pip install Flask requests Flask-CORS PyJWT cryptography
 
 
-Running the Application
+**Running the Application**
 
 You need to run two separate terminals to start both the Client and the Server.
 
-Terminal 1: Start the Client (Service Provider)
+_Terminal 1: Start the Client (Service Provider)_
 
-# Make sure .venv is activated
 cd Client
 python app.py
-# Running on http://localhost:5000
+Running on http://localhost:5000
 
 
-Terminal 2: Start the SSO Server (Identity Provider)
+_Terminal 2: Start the SSO Server (Identity Provider)_
 
-# Make sure .venv is activated
 cd SSO_Server
 python app.py
-# Running on http://localhost:5001
+Running on http://localhost:5001
 
-
-🧪 **How to Test**
-
-Open your browser and go to http://localhost:5000 (Client Homepage).
-
-You will see the homepage with MyBK and LMS panels.
-
-Click the "Đăng nhập" (Login) button on any panel.
-
-You will be automatically redirected to the SSO Server at http://localhost:5001/login.
-
-Enter any username/password (e.g., admin/admin) and click Login.
-
-You will be redirected back to the Client Homepage.
-
-The button will change to "Truy cập" (Access), and you can now access the LMS and MyBK services.
-
-Click "Đăng xuất" (Logout) to clear the session.
 
 🛠️ **Technologies Used**
 
