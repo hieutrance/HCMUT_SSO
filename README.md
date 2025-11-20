@@ -1,103 +1,131 @@
-OIDC Demo Authentication – Flask Client & SSO Server
+SSO Simulation Project - HCMUT
 
-Dự án mô phỏng cơ chế Single Sign-On (SSO) theo mô hình OIDC (OpenID Connect), gồm 2 ứng dụng Flask chạy độc lập:
+A simulation of a Single Sign-On (SSO) system using the OpenID Connect (OIDC) protocol, built with Python Flask. This project demonstrates the interaction between a Service Provider (SP) and an Identity Provider (IdP) in a distributed environment.
 
-Client App – Ứng dụng cần xác thực (Relying Party)
+(Replace this link with a screenshot of your actual project structure or a diagram)
 
-SSO Server – Máy chủ cung cấp đăng nhập, token, xác thực người dùng (Identity Provider)
+🌟 Features
 
-Mục tiêu của dự án là xây dựng quy trình login SSO cơ bản, gồm:
+Distributed Architecture: Separate Client (SP) and SSO Server (IdP) applications running on different ports.
 
-Redirect sang trang đăng nhập chung
+SSO Login Flow: Redirects unauthenticated users from the Client to the SSO Server for centralized login.
 
-Xác thực người dùng tại SSO Server
+Mock Authentication: Simulates the login process without a real database (for educational purposes).
 
-Trả về mã phiên (session/token)
+Cross-Domain Redirects: Demonstrates the redirect flow between localhost:5000 and localhost:5001.
 
-Client nhận token → cho phép truy cập vào trang bảo vệ
+Responsive UI: Clean and modern user interface for Homepage, Login, and Register pages.
 
-🔧 Công nghệ sử dụng
+Dynamic Backgrounds: Login pages feature a slideshow background script.
 
-Python 3.x
+🏗️ Project Structure
 
-Flask
+The project follows a microservices-like structure with two distinct Flask applications:
 
-HTML/CSS/JS
-
-OIDC flow cơ bản (mô phỏng logic redirect + login session)
-
-📁 Cấu trúc thư mục
 BTL_MMANM/
-│
-├── Client/
-│   ├── static/
-│   │   ├── css/style_client.css
-│   │   ├── js/script_client.js
-│   │   └── images/
-│   ├── templates/client/
-│   │   ├── Homepage.html
-│   │   ├── Lms.html
-│   │   └── Mybk.html
-│   └── app.py
-│
-└── SSO_Server/
-    ├── static/
-    │   ├── css/style_server.css
-    │   ├── js/script_server.js
-    │   └── images/
-    ├── templates/sso_server/
-    │   ├── loginpage.html
-    │   ├── register.html
-    │   └── forgetpassword.html
-    └── app.py
+├── .venv/                      # Shared Virtual Environment
+├── Client/                     # Service Provider (Runs on Port 5000)
+│   ├── app.py                  # Client logic (LMS, MyBK services)
+│   ├── static/                 # Client assets (CSS, JS, Images)
+│   └── templates/
+│       └── client/             # Client HTML pages
+├── SSO_Server/                 # Identity Provider (Runs on Port 5001)
+│   ├── app.py                  # SSO logic (Login, Auth)
+│   ├── static/                 # Server assets
+│   └── templates/
+│       └── sso_server/         # Server HTML pages
+└── README.md
 
-🚀 Cách chạy dự án
-1. Clone repo
-git clone <link_repo_cua_ban>
+
+🚀 Getting Started
+
+Follow these instructions to set up and run the project on your local machine.
+
+Prerequisites
+
+Python 3.x installed.
+
+pip (Python package installer).
+
+Installation
+
+Clone the repository:
+
+git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
 cd BTL_MMANM
 
-2. Tạo môi trường ảo
-python -m venv venv
-source venv/bin/activate        # Linux / macOS
-venv\Scripts\activate           # Windows
 
-3. Cài dependencies
+Create and Activate Virtual Environment:
 
-(Trong dự án nếu bạn có file requirements.txt thì sửa lại lệnh dưới)
+Windows (PowerShell):
 
-pip install flask
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 
-4. Chạy Client
+
+Linux/macOS:
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+
+Install Dependencies:
+
+pip install Flask requests Flask-CORS PyJWT cryptography
+
+
+Running the Application
+
+You need to run two separate terminals to start both the Client and the Server.
+
+Terminal 1: Start the Client (Service Provider)
+
+# Make sure .venv is activated
 cd Client
 python app.py
+# Running on http://localhost:5000
 
 
-Client sẽ chạy tại:
-➡ http://127.0.0.1:5000
+Terminal 2: Start the SSO Server (Identity Provider)
 
-5. Chạy SSO Server
-
-Mở terminal thứ hai:
-
+# Make sure .venv is activated
 cd SSO_Server
 python app.py
+# Running on http://localhost:5001
 
 
-SSO Server sẽ chạy tại:
-➡ http://127.0.0.1:5001
+🧪 How to Test
 
-🔑 Luồng OIDC mô phỏng
+Open your browser and go to http://localhost:5000 (Client Homepage).
 
-Người dùng truy cập Client (http://127.0.0.1:5000
-).
+You will see the homepage with MyBK and LMS panels.
 
-Client kiểm tra trạng thái đăng nhập → chưa đăng nhập → redirect sang:
+Click the "Đăng nhập" (Login) button on any panel.
 
-http://127.0.0.1:5001/login
+You will be automatically redirected to the SSO Server at http://localhost:5001/login.
 
+Enter any username/password (e.g., admin/admin) and click Login.
 
-Người dùng nhập tài khoản/mật khẩu tại SSO Server.
+You will be redirected back to the Client Homepage.
 
-SSO Server xác thực → tạo session → gửi token/flag authenticated về Client.
+The button will change to "Truy cập" (Access), and you can now access the LMS and MyBK services.
 
-Client nhận token → cho phép truy cập trang đã bảo vệ (Homepage/Lms/Mybk).
+Click "Đăng xuất" (Logout) to clear the session.
+
+🛠️ Technologies Used
+
+Backend: Python, Flask
+
+Frontend: HTML5, CSS3, JavaScript
+
+Security Concepts: SSO, OpenID Connect (OIDC) Flow, Sessions, Cookies
+
+📝 Note
+
+This is a simulation project for the Network Security & Cryptography course. It focuses on the architectural flow of SSO and does not implement full database storage or production-grade encryption mechanisms.
+
+👥 Authors
+
+[Your Name] - Initial work
+
+Happy Coding! 🚀
