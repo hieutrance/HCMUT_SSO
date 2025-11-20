@@ -21,7 +21,7 @@ Dynamic Backgrounds: Login pages feature a slideshow background script.
 
 The project follows a microservices-like structure with two distinct Flask applications:
 
-pre>
+<pre>
 BTL_MMANM/
 ├── .venv/                      # Shared Virtual Environment
 ├── Client/                     # Service Provider (Runs on Port 5000)
