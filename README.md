@@ -43,9 +43,10 @@ Dự án gồm 2 phần ứng dụng chạy song song:
 - Python 3.x  
 - Flask  
 - Các thư viện có trong `requirements.txt` (nếu có)
-
-### ▶️ **Chạy SSO Server**
+  
 ```bash
+### ▶️ **Chạy SSO Server**
+
 cd SSO_Server
 python app.py
 
