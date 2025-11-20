@@ -2,7 +2,6 @@ SSO Simulation Project - HCMUT
 
 A simulation of a Single Sign-On (SSO) system using the OpenID Connect (OIDC) protocol, built with Python Flask. This project demonstrates the interaction between a Service Provider (SP) and an Identity Provider (IdP) in a distributed environment.
 
-(Replace this link with a screenshot of your actual project structure or a diagram)
 
 🌟 Features
 
@@ -51,7 +50,7 @@ Installation
 
 Clone the repository:
 
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+git clone https://github.com/hieutrance/HCMUT_SSO.git
 cd BTL_MMANM
 
 
@@ -124,8 +123,4 @@ Security Concepts: SSO, OpenID Connect (OIDC) Flow, Sessions, Cookies
 
 This is a simulation project for the Network Security & Cryptography course. It focuses on the architectural flow of SSO and does not implement full database storage or production-grade encryption mechanisms.
 
-👥 Authors
 
-[Your Name] - Initial work
-
-Happy Coding! 🚀
