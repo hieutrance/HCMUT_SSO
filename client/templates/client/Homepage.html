@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCMUT SSO - Trang Chủ Dịch Vụ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_client.css') }}">
+</head>
+
+<body>
+    
+    <!-- KHỐI ĐIỀU HƯỚNG GÓC TRÊN BÊN PHẢI -->
+    <div class="top-right-links">
+        {% if username == 'Khách' %}
+            <!-- Chú ý: register_page là route sẽ được định nghĩa trong Client/app.py để redirect sang SSO Server -->
+            <a href="{{ url_for('register_page') }}" class="btn-register-top">Đăng Ký</a>
+        {% else %}
+            <span class="text-white mr-4">Xin chào, <strong>{{ username }}</strong></span>
+            <a href="{{ url_for('logout') }}" class="btn-logout-top">Đăng xuất</a>
+        {% endif %}
+    </div>
+
+    <div class="main-container">
+        <!-- Panel Dịch vụ 1: MyBK -->
+        <div class="panel panel-mybk">
+            <div class="content-box">
+                <h2 class="title-service title-mybk">MyBK</h2>
+                {% if username == 'Khách' %}
+                    <!-- login_page là route trong Client/app.py để bắt đầu luồng SSO -->
+                    <a href="{{ url_for('login_page') }}" class="btn-service btn-mybk">Đăng nhập</a>
+                {% else %}
+                    <a href="{{ url_for('mybk_service') }}" class="btn-service btn-mybk">Truy cập</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Panel Dịch vụ 2: LMS -->
+        <div class="panel panel-lms">
+            <div class="content-box">
+                <h2 class="title-service title-lms">LMS</h2>
+                {% if username == 'Khách' %}
+                    <a href="{{ url_for('login_page') }}" class="btn-service btn-lms">Đăng nhập</a>
+                {% else %}
+                    <a href="{{ url_for('lms_service') }}" class="btn-service btn-lms">Truy cập</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Cập nhật đường dẫn JS khớp với thư mục Client/static/js/script_client.js -->
+    <script src="{{ url_for('static', filename='script_client.js') }}"></script>
+</body>
+</html>

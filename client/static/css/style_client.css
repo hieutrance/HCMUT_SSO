@@ -1,0 +1,135 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* KHỐI ĐIỀU HƯỚNG GÓC TRÊN BÊN PHẢI */
+.top-right-links {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.btn-register-top, .btn-logout-top {
+    padding: 10px 18px;
+    background-color: #007bff; /* Màu xanh dương cho nút */
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout-top {
+    background-color: #dc3545; /* Màu đỏ cho Đăng xuất */
+}
+
+.btn-register-top:hover {
+    background-color: #0056b3;
+}
+
+.btn-logout-top:hover {
+    background-color: #c82333;
+}
+
+/* Phần chính chứa 2 Panel */
+.main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    margin-top: 0;
+}
+
+/* Panel chung (chia đôi màn hình) */
+.panel {
+    flex: 1; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    text-align: center;
+    min-height: 100vh; 
+}
+
+/* Define hình nền cho 2 panel */
+.panel-mybk {
+    background-image: url('../images/bg1.jpg'); 
+}
+
+.panel-lms {
+    background-image: url('../images/bg4.jpg'); 
+}
+
+
+.content-box {
+    background-color: rgba(255, 255, 255, 0.6); 
+    backdrop-filter: blur(8px); 
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    min-width: 300px;
+}
+
+
+.title-service {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: 800;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Thêm bóng để nổi bật trên nền mờ */
+}
+
+.title-mybk {
+    color: #003366; 
+}
+
+.title-lms {
+    color: #007bff; 
+}
+
+
+/* Nút Đăng nhập/Truy cập */
+.btn-service {
+    display: inline-block;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.btn-mybk {
+    background-color: #003366;
+    color: white;
+}
+
+.btn-lms {
+    background-color: #007bff;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    .panel {
+        min-height: 50vh;
+    }
+    .top-right-links {
+        top: 10px;
+        right: 10px;
+    }
+}
