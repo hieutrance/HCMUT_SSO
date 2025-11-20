@@ -43,8 +43,11 @@ Dự án gồm 2 phần ứng dụng chạy song song:
 - Python 3.x  
 - Flask  
 - Các thư viện có trong `requirements.txt` (nếu có)
-  
 
+### ▶️ **Khởi tạo môi trường ảo**
+```
+.\.venv\Scripts\activate
+```
 ### ▶️ **Chạy SSO Server**
 
 ```bash
@@ -55,7 +58,7 @@ python app.py
 Ứng dụng chạy tại:
 ```
 http://127.0.0.1:5001
-cd Client
+cd SSO_Server
 python app.py
 ```
 ### ▶️ **Chạy Client**
@@ -66,6 +69,8 @@ python app.py
 Ứng dụng chạy tại:
 ```
 http://127.0.0.1:5000
+cd Client
+python app.py
 ```
 🔗 3. Luồng hoạt động hệ thống
 
@@ -77,11 +82,11 @@ Sau khi đăng nhập thành công, SSO trả token và chuyển người dùng 
 
 Client xác thực token và cho phép truy cập các trang như:
 
-Homepage
+- Homepage
 
-LMS
+- LMS
 
-MyBK
+- MyBK
 
 
 🧪 4. Tính năng chính
@@ -108,8 +113,8 @@ MyBK
 
 Hai server phải chạy độc lập trên 2 port khác nhau:
 
-Client → 5000
+- Client → 5000
 
-SSO → 5001
+- SSO → 5001
 
 Token truyền giữa Client ↔ SSO có thể là JWT hoặc session key tùy bạn triển khai.
