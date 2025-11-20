@@ -44,24 +44,29 @@ Dự án gồm 2 phần ứng dụng chạy song song:
 - Flask  
 - Các thư viện có trong `requirements.txt` (nếu có)
   
-```bash
+
 ### ▶️ **Chạy SSO Server**
 
+```bash
 cd SSO_Server
 python app.py
+```
 
 Ứng dụng chạy tại:
+```
 http://127.0.0.1:5001
 cd Client
 python app.py
-
+```
 ### ▶️ **Chạy Client**
+```
 cd Client
 python app.py
-
+```
 Ứng dụng chạy tại:
+```
 http://127.0.0.1:5000
-
+```
 🔗 3. Luồng hoạt động hệ thống
 
 Người dùng truy cập Client tại 127.0.0.1:5000
