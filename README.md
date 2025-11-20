@@ -1,21 +1,7 @@
 # HCMUT SSO by OIDC
-A simulation of a Single Sign-On (SSO) system using the OpenID Connect (OIDC) protocol, built with Python Flask. This project demonstrates the interaction between a Service Provider (SP) and an Identity Provider (IdP) in a distributed environment.
+Mô phỏng hệ thống Single-Sign-On sử dụng giao thức OpenID Connect (OIDC), được xây dựng bằng Python Flask. Dự án này minh họa sự tương tác giữa Service Provider (SP) và Identity Provider (IdP) trong môi trường phân tán.
 
-🌟 Features
-
-Distributed Architecture: Separate Client (SP) and SSO Server (IdP) applications running on different ports.
-
-SSO Login Flow: Redirects unauthenticated users from the Client to the SSO Server for centralized login.
-
-Mock Authentication: Simulates the login process without a real database (for educational purposes).
-
-Cross-Domain Redirects: Demonstrates the redirect flow between localhost:5000 and localhost:5001.
-
-Responsive UI: Clean and modern user interface for Homepage, Login, and Register pages.
-
-Dynamic Backgrounds: Login pages feature a slideshow background script.
-
-Dự án gồm 2 phần ứng dụng chạy song song:
+**🌟 Dự án gồm 2 phần ứng dụng chạy song song:**
 - **Client App** – cổng dịch vụ chính  
 - **SSO Server** – hệ thống xác thực Single Sign-On  
 
