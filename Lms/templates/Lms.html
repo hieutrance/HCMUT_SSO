@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS - Hệ thống Học tập</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .service-content {
+            background-color: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .sidebar {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li a {
+            display: block;
+            padding: 10px 0;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed #cce0ff;
+        }
+        .sidebar ul li a:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="user-nav nav-service">
+        <div class="nav-links">
+            <a href="{{ url_for('home_page') }}">Trang Chủ</a>
+            <a href="{{ url_for('lms_service') }}" class="active">LMS</a>
+            <a href="{{ url_for('mybk_service') }}">MyBK</a>
+        </div>
+        <div class="user-info">
+            Xin chào, <strong>{{ username }}</strong>!
+            <a href="{{ url_for('logout_sso') }}" class="btn-logout">Đăng xuất</a>
+        </div>
+    </nav>
+
+    <!-- Nội dung chính -->
+    <div class="service-wrapper">
+        <div class="sidebar">
+            <h2>Khóa học</h2>
+            <ul>
+                <li><a href="#">Mật mã và An ninh mạng</a></li>
+                <li><a href="#">Hệ quản trị cơ sở dữ liệu</a></li>
+                <li><a href="#">Đánh giá hiệu năng hệ thống</a></li>
+                <li><a href="#">Công nghệ phần mềm</a></li>
+                <li><a href="#">Học máy</a></li>
+            </ul>
+        </div>
+
+        <main class="service-main">
+            <h1>Hệ thống Quản lý Học tập (LMS)</h1>
+            <p>Xin chào, **{{ username }}**. Bạn đã đăng nhập thành công vào LMS qua cổng SSO.</p>
+            
+            <div class="service-content">
+                <h3>Thông báo mới nhất</h3>
+                <p><strong>Ngày 14/11:</strong> Bài tập lớn Mật mã đã được cập nhật yêu cầu. Vui lòng kiểm tra đề bài.</p>
+                <p><strong>Ngày 10/11:</strong> Lịch học bù Môn Công nghệ phần mềm đã được cập nhật</p>
+            </div>
+            
+            <a href="{{ url_for('home_page') }}" class="back-link mt-5 block text-center">&larr; Quay về Trang chủ</a>
+        </main>
+    </div>
+
+</body>
+</html>
