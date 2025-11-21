@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBK - Cổng thông tin Sinh viên</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_client.css') }}">
+    <style>
+        .service-content {
+            background-color: #fff2e6;
+            border-left: 5px solid #ff9900;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .info-card {
+            background-color: #ffffff;
+            border: 1px solid #ffcc80;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .info-card h4 {
+            color: #e67300;
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="user-nav nav-service">
+        <div class="nav-links">
+            <a href="{{ url_for('home_page') }}">Trang Chủ</a>
+            <a href="{{ url_for('lms_service') }}">LMS</a>
+            <a href="{{ url_for('mybk_service') }}" class="active">MyBK</a>
+        </div>
+        <div class="user-info">
+            Xin chào, <strong>{{ username }}</strong>!
+            <a href="{{ url_for('logout_sso') }}" class="btn-logout">Đăng xuất</a>
+        </div>
+    </nav>
+
+    <!-- Nội dung chính -->
+    <div class="service-wrapper">
+        <main class="service-main full-width">
+            <h1>Cổng thông tin Sinh viên (MyBK)</h1>
+            <p>Xin chào, **{{ username }}**. Bạn đã đăng nhập thành công vào MyBK qua cổng SSO.</p>
+            
+            <div class="info-card">
+                <h4>Thông tin Cá nhân</h4>
+                <p><strong>Mã số sinh viên:</strong> 2211020 </p>
+                <p><strong>Email:</strong> {{ user_id }}@hcmut.edu.vn</p>
+            </div>
+
+            <div class="info-card">
+                <h4>Kết quả Học tập (Học kỳ Hiện tại)</h4>
+                <p><strong>Điểm Trung bình (GPA):</strong> 3.6/4.0</p>
+                <p><strong>Số tín chỉ đã đăng ký:</strong> 17</p>
+            </div>
+
+            <div class="service-content">
+                <h3>Các chức năng chính</h3>
+                <ul>
+                    <li>Đăng ký Môn Học</li>
+                    <li>Thời khóa biểu</li>
+                    <li>Hỗ trợ trực tuyến</li>
+                </ul>
+            </div>
+            
+            <a href="{{ url_for('home_page') }}" class="back-link mt-5 block text-center">&larr; Quay về Trang chủ</a>
+        </main>
+    </div>
+
+</body>
+</html>
