@@ -15,8 +15,6 @@ def get_connection():
         database=os.getenv("DB_NAME")
     )
     
-    
-
 def execute_sql(query, params=None, fetch_one=False, fetch_all=False):
     conn = None
     cursor = None
