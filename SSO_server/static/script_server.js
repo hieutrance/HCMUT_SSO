@@ -42,3 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Lặp lại mỗi 5 giây
     setInterval(changeBackground, intervalTime);
 });
+
+// const form = document.getElementById('myForm');
+
+// form.addEventListener('submit', function(event) {
+//     event.preventDefault(); // Ngăn việc form submit mặc định (reload page)
+//     username = document.getElementById('username')
+//     password = document.getElementById('username')
+
+
+//     // Xử lý dữ liệu form ở đây
+// });

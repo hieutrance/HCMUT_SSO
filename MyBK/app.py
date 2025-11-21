@@ -63,7 +63,6 @@ def sso_callback():
     return "Lỗi: Không nhận được mã xác thực từ SSO Server."
 
 
-
 @app.route('/register')
 def register_page():
     return redirect(f"{SSO_SERVER_URL}/register")
