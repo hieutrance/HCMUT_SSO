@@ -36,20 +36,17 @@ def login_page_sso():
         else:
             return "Đăng nhập thành công trên SSO Server (Không có Client để quay về)."
 
-    # SỬA LỖI: Bỏ 'sso_server/' vì file nằm ngay trong templates/
     return render_template('loginpage.html', redirect_uri=redirect_to_client)
 
 @app.route('/register')
 def register_page():
-    # SỬA LỖI: Bỏ 'sso_server/'
     return render_template('register.html')
 
 @app.route('/forgetpassword')
 def forget_password_page():
-    # SỬA LỖI: Bỏ 'sso_server/'
     return render_template('forgetpassword.html')
 
-# --- KHỞI CHẠY ---
+
 if __name__ == '__main__':
     print(f"Starting SSO Server on port {SSO_PORT}")
     app.run(host='0.0.0.0', port=SSO_PORT, debug=True)
