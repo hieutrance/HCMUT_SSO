@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from services.auth_service import register_user, login_user
+from services.auth_service import register_user, authorization, exchange_token, check_token_expiration, get_user_info
+
 from http import HTTPStatus
 
 auth_bp = Blueprint("auth", __name__)
@@ -10,13 +11,16 @@ def test():
 
 @auth_bp.post("/register")
 def register():
-    data = request.json
-    return register_user(data)
+    return register_user(request)
     
-@auth_bp.post("/login")
+@auth_bp.post("/authenticate")
 def login():
-    data = request.json
-    token, err = login_user(data)
-    if err:
-        return jsonify({"status": "error", "message": err}), 401
-    return jsonify({"status": "success", "access_token": token})
+    return authorization(request)
+
+@auth_bp.post("/token")
+def post_exchange_token():
+    return exchange_token(request)
+
+@auth_bp.get("/user-info")
+def user_info():
+    return get_user_info(request)

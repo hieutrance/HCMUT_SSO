@@ -37,7 +37,7 @@ def execute_sql(query, params=None, fetch_one=False, fetch_all=False):
 
     except Error as e:
         print("MySQL error:", e)
-        return None
+        return False
 
     finally:
         if cursor:
