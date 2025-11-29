@@ -6,7 +6,7 @@ from routes.test import test_bp
 app = Flask(__name__)
 
 
-@app.route('/authoriate')
+@app.route('/authorize')
 def render_authoration_ui():
 
     scope = request.args.get("scope")
@@ -54,7 +54,7 @@ def login_page_sso():
 
     return render_template('loginpage.html', redirect_uri=redirect_to_client)
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register_page():
     return render_template('register.html')
 

@@ -6,7 +6,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-image: url('../images/bg2.jpg    ');   /* Hình nền */
+    background-image: url('images/bg2.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

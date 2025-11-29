@@ -40,7 +40,7 @@ def login_page():
     callback_url = f"{SERVICE_URL}/sso_callback"
     
     sso_redirect_url = (
-        f"{SSO_SERVER_URL}/login?"
+        f"{SSO_SERVER_URL}/authorize?"
         f"client_id={CLIENT_ID}&"
         f"redirect_uri={callback_url}"
     )

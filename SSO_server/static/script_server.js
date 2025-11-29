@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const images = [
         'bg1.jpg',
         'bg2.jpg',
-        'bg3.jpg', // Nếu bạn không có bg3, bg4 ở server thì xóa dòng này
-        'bg4.jpg'  // Nếu bạn không có bg3, bg4 ở server thì xóa dòng này
+        'bg3.jpg', 
+        'bg4.jpg' 
     ];
     
     let currentIndex = 0;

@@ -218,7 +218,7 @@ def exchange_token(req):
 
         # Insert refresh token
         refresh_token = secrets.token_urlsafe(32)
-        refresh_exp = (datetime.now(timezone.utc) + timedelta(days=30)).replace(tzinfo=None)
+        refresh_exp = (datetime.now(timezone.utc) + timedelta(days=1)).replace(tzinfo=None)
         cursor.execute(
             """INSERT INTO refresh_tokens(token, client_id, user_id, expires_at, revoked)
             VALUES(%s,%s,%s,%s,%s)""",
@@ -481,7 +481,7 @@ def refresh_token(req):
 
         # Insert refresh token
         new_refresh_token = secrets.token_urlsafe(32)
-        new_refresh_exp = (datetime.now(timezone.utc) + timedelta(days=30)).replace(tzinfo=None)
+        new_refresh_exp = (datetime.now(timezone.utc) + timedelta(days=1)).replace(tzinfo=None)
         cursor.execute(
             """INSERT INTO refresh_tokens(token, client_id, user_id, expires_at, revoked)
             VALUES(%s,%s,%s,%s,%s)""",

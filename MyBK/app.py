@@ -5,7 +5,7 @@ from flask import Flask, render_template, redirect, url_for, session, request
 SERVICE_PORT = 3000 
 SERVICE_URL = f"http://localhost:{SERVICE_PORT}"
 
-SSO_SERVER_URL = "http://localhost:5001" 
+SSO_SERVER_URL = "http://localhost:5000" 
 CLIENT_ID = "mybk_service_client"
 
 app = Flask(__name__)
