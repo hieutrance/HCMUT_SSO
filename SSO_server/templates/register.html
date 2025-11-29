@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký - HCMUT SSO</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="https://www.hcmut.edu.vn/favicon.ico" type="image/x-icon">
+    <!-- Cập nhật đường dẫn CSS khớp với style_server.css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_server.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/png">
 </head>
 
 <body>
@@ -14,7 +15,7 @@
     <div class="form-container">
         <div class="form-header-register">
             <div class="logo-header">
-                <img src="logo.png" alt="HCMUT Logo" class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="HCMUT Logo" class="logo">
                 <div class="logo-text">
                     <strong>HCMUT SSO</strong>
                     <span>by OIDC</span>
@@ -23,6 +24,7 @@
             <h2 class="form-title-register">Đăng Ký</h2>
         </div>
 
+        <!-- Form đăng ký -->
         <form action="#" method="POST">
             <div class="form-group">
                 <label for="username">Tên tài khoản</label>
@@ -48,12 +50,18 @@
         </form>
 
         <div class="form-footer">
-            <a href="loginpage.html">Đã có tài khoản? Đăng nhập</a>
+            <!-- Link quay lại trang login của SSO Server -->
+            <a href="{{ url_for('login_page_sso') }}">Đã có tài khoản? Quay lại Đăng nhập</a>
         </div>
     </div>
 
-    <script src="script.js"></script>
+        <script>
+
+        window.STATIC_IMAGE_URL = "{{ url_for('static', filename='images') }}/";
+    </script>
+    
+    <script src="{{ url_for('static', filename='script_server.js') }}"></script>
+
 
 </body>
-
 </html>

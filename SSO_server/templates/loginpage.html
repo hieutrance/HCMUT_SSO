@@ -5,15 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - HCMUT SSO</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_server.css') }}">
     <link rel="icon" href="https://www.hcmut.edu.vn/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
-
     <div class="form-container">
         <div class="logo-header">
-            <img src="logo.png" alt="HCMUT Logo" class="logo">
+             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="HCMUT Logo" class="logo">
             <div class="logo-text">
                 <strong>HCMUT SSO</strong>
                 <span>by OIDC</span>
@@ -21,7 +20,14 @@
         </div>
         <h2 class="form-title">Đăng nhập</h2>
 
-        <form action="#" method="POST">
+        <form id="login-form">
+            <input type="hidden" name="redirect_uri" id="redirect_uri">
+            <input type="hidden" name="scope" id="scope">
+            <input type="hidden" name="client_id" id="client_id">
+            <input type="hidden" name="client_id" id="client_id">
+            <input type="hidden" name="client_id" id="client_id">
+
+
             <div class="form-group">
                 <label for="username">Tên tài khoản</label>
                 <input type="text" id="username" name="username" required>

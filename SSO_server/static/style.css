@@ -202,12 +202,12 @@ body {
 
 .bg-nen-1 {
     /* Thay bằng ảnh nền thứ nhất của bạn */
-    background-image: url('bg1.jpg');
+    background-image: url('images/images/bg1.jpg');
 }
 
 .bg-nen-2 {
     /* Ảnh nền thứ hai (từ code của bạn) */
-    background-image: url('bg2.jpg');
+    background-image: url('images/images/bg2.jpg');
 }
 
 .form-footer {
@@ -222,11 +222,11 @@ body {
 
 
 .bg-nen-1 {
-    background-image: url('bg1.jpg');
+    background-image: url('images/bg1.jpg');
 }
 
 .bg-nen-2 {
-    background-image: url('bg2.jpg');
+    background-image: url('images/bg2.jpg');
 }
 
 /* Lớp nền 1 (Nằm dưới cùng, cố định) */
@@ -243,7 +243,7 @@ body::before {
     /* Nằm dưới cùng */
 
     /* THAY BẰNG ẢNH NỀN THỨ 1 CỦA BẠN */
-    background-image: url('bg1.jpg');
+    background-image: url('images/bg1.jpg');
     background-size: cover;
     background-position: center;
 }
@@ -261,7 +261,7 @@ body::after {
     /* Nằm trên ảnh 1, nhưng dưới form */
 
     /* THAY BẰNG ẢNH NỀN THỨ 2 CỦA BẠN */
-    background-image: url('bg2.jpg');
+    background-image: url('images/bg2.jpg');
     background-size: cover;
     background-position: center;
 
