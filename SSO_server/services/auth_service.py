@@ -1,19 +1,16 @@
 import jwt
 from jwt import InvalidTokenError
-from db import execute_sql
+from db import execute_sql, get_connection
 from utils.security import hash_password, verify_password
 from http import HTTPStatus
 from flask import jsonify
 from db import execute_sql
-from utils.security import hash_password, verify_password
 import datetime
 from flask import request, jsonify
 from flask import jsonify
-from utils.helpers import  generate_id_token
+from utils.helpers import  generate_id_token, validate_client_assertion, is_valid_exp, generate_access_token, generate_refresh_token 
 import base64, secrets
 from datetime import datetime, timezone, timedelta
-
-
 
 def register_user(req):
     body_data = req.get_json()
@@ -49,6 +46,8 @@ def authorization(req):
     username, password = request_data.get("username"), request_data.get("password"),
 
     scope, response_type, client_id, redirect_uri, nonce = request_data.get("scope"), request_data.get("response_type"), request_data.get("client_id"), request_data.get("redirect_uri"), request_data.get("nonce")
+    
+    print(f"Redirect URI: {redirect_uri}")
     
     state = request_data.get("state", "")
     
@@ -132,67 +131,26 @@ def authorization(req):
 
         return jsonify(response_data), HTTPStatus.OK
 
-def get_client_id_from_jwt(token):
-    try:
-        # decode payload mà không verify signature
-        payload = jwt.decode(token, options={"verify_signature": False})
-        client_id = payload.get("iss")
-        if not client_id:
-            return None, "missing iss claim"
-        return client_id, None
-    except jwt.exceptions.InvalidTokenError:
-        return None, "invalid token format"
-    except Exception as e:
-        return None, f"unexpected error: {str(e)}"
-
 def exchange_token(req):
     req_body = req.get_json()
+    required_params = ["client_assertion_type", "client_assertion", "code", "grant_type", "redirect_uri"]
+    missing = [p for p in required_params if not req_body.get(p)]
+    if len(missing) > 0: 
+        return jsonify({
+            "error": "bad_request",
+            "error_description": f"Required {''.join(missing)} in request body" 
+        }), HTTPStatus.BAD_REQUEST
     
     client_assertion_type, client_assertion = req_body.get("client_assertion_type"), req_body.get("client_assertion")
     
-    if not client_assertion:
-        return jsonify({
-            "error": "unauthorized",
-            "error_description": "Unauthorized"
-        }), HTTPStatus.UNAUTHORIZED
-
-    if not client_assertion_type or client_assertion_type != "urn:ietf:params:oauth:client-assertion-type:jwt-bearer":
-        return jsonify({
-            "error": "unauthorized",
-            "error_description": "unsupported_assertion_type"
-        }), HTTPStatus.BAD_REQUEST
+    result, info = validate_client_assertion(client_assertion_type, client_assertion)
+    # Nếu fails -> result: jsonify(), status code
+    if result is not True:
+        return result, info
     
-    client_id, error_msg = get_client_id_from_jwt(client_assertion)
-    
-    if client_id is None:
-        return jsonify({
-            "error": "unauthorized",
-            "error_description": error_msg
-        }), HTTPStatus.UNAUTHORIZED
-        
-    temp = execute_sql(''' 
-                    SELECT secretKey FROM clients
-                    WHERE id=%s                
-                ''', (client_id,), True)
-    client_secret = temp["secretKey"]
-    print(f"Client secret's key: {client_secret}")
-    print(f"Client_assertion: {client_assertion}")
-
-    
-    try: 
-        payload = jwt.decode(client_assertion, client_secret, algorithms=["HS256"], audience="http://localhost:5000/token")
-        print(f"Payload: {payload}")
-    except jwt.ExpiredSignatureError:
-        return jsonify({
-            "error": "unauthorized",
-            "error_description": "Expired assertion"
-        }), HTTPStatus.UNAUTHORIZED
-    except jwt.InvalidTokenError:
-        return jsonify({
-            "error": "invalid_assertion",
-            "error_description": "Invalid assertion"
-        }), HTTPStatus.BAD_REQUEST
-        
+    # Nếu success -> result=True, info=payload
+    payload = info
+    client_id = payload["iss"]
     
     authorization_code = req_body.get("code")
     redirect_uri = req_body.get("redirect_uri")
@@ -219,12 +177,13 @@ def exchange_token(req):
             "error_description": "Expired authorization code"
         }), HTTPStatus.BAD_REQUEST
     
+    print(f'''Expected redirect_uri {db_authorization_code["redirect_uri"]}''')
+    
     if redirect_uri != db_authorization_code["redirect_uri"]:
         return jsonify({
             "error": "invalid_redirect_uri",
             "error_description": "Invalid redirect_uri"
-        }), HTTPStatus.BAD_REQUEST
-            
+        }), HTTPStatus.BAD_REQUEST       
             
     print(f'''Used value: {db_authorization_code["used"]}''')
     if db_authorization_code["used"] == 1:
@@ -240,32 +199,54 @@ def exchange_token(req):
     }), HTTPStatus.INTERNAL_SERVER_ERROR
     
     # Generate idtoken, accesstoken, refreshtoken
-    id_token = generate_id_token(db_authorization_code["user_id"], db_authorization_code["client_id"])
+    user_id = db_authorization_code["user_id"]
+    client_id = db_authorization_code["client_id"]
     
-    access_token = secrets.token_urlsafe(32)
-    access_token_exp = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(tzinfo=None)
-    
-    refresh_token = secrets.token_urlsafe(32)
-    refresh_token_exp = (datetime.now(timezone.utc) + timedelta(days=1)).replace(tzinfo=None)
+    conn = get_connection()
+    cursor = conn.cursor()  
+    try:
+        id_token = generate_id_token(user_id, client_id)
 
-    check1 = execute_sql("""
-            INSERT INTO access_tokens(token, client_id, user_id, scope, expires_at, revoked) 
-            VALUES(%s,%s,%s,%s,%s,%s)
-            """,
-            (access_token, db_authorization_code["client_id"], db_authorization_code["user_id"], "openid profile", access_token_exp, False)
-            )
-    check2 = execute_sql("""
-            INSERT INTO refresh_tokens(token, client_id, user_id, expires_at, revoked)
-            VALUES(%s,%s,%s,%s,%s)             
-            """,
-            (refresh_token, db_authorization_code["client_id"], db_authorization_code["user_id"], refresh_token_exp, False)
-            )
-    if not check1 or not check2:
+        # Insert access token
+        access_token = secrets.token_urlsafe(32)
+        access_exp = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(tzinfo=None)
+        cursor.execute(
+            """INSERT INTO access_tokens(token, client_id, user_id, scope, expires_at, revoked)
+            VALUES(%s,%s,%s,%s,%s,%s)""",
+            (access_token, client_id, user_id, "openid profile", access_exp, False)
+        )
+
+        # Insert refresh token
+        refresh_token = secrets.token_urlsafe(32)
+        refresh_exp = (datetime.now(timezone.utc) + timedelta(days=30)).replace(tzinfo=None)
+        cursor.execute(
+            """INSERT INTO refresh_tokens(token, client_id, user_id, expires_at, revoked)
+            VALUES(%s,%s,%s,%s,%s)""",
+            (refresh_token, client_id, user_id, refresh_exp, False)
+        )
+
+        # Insert session
+        cursor.execute(
+            """INSERT INTO user_sessions(id_token, access_token, refresh_token)
+            VALUES (%s,%s,%s)""",
+            (id_token, access_token, refresh_token)
+        )
+
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        print("DB error:", e)
         return jsonify({
             "error": "internal_error",
             "error_description": "Internal server error"
         }), HTTPStatus.INTERNAL_SERVER_ERROR
+
+    finally:
+        cursor.close()
+        conn.close()
         
+    
     response_data = {
         "token_type": "Bearer",
         "access_token": access_token,
@@ -387,4 +368,213 @@ def get_user_info(req):
         response_data["address"] = user["address"]
         
     return jsonify(response_data), HTTPStatus.ACCEPTED
+
+def refresh_token(req):
+    req_data = req.get_json()
+    required_params = ["grant_type", "redirect_uri", "refresh_token", "client_assertion_type", "client_assertion"]
+    missing = [p for p in required_params if not req_data.get(p)]
+    
+    if len(missing) > 0:
+        return jsonify({
+            "error": "bad_request",
+            "error_description": f"Required {' '.join(missing)} in request body"
+        }), HTTPStatus.BAD_REQUEST
         
+    grant_type = req_data.get("grant_type")
+    redirect_uri = req_data.get("redirect_uri")
+    refresh_token =  req_data.get("refresh_token")
+    client_assertion_type = req_data.get("client_assertion_type")
+    client_assertion = req_data.get("client_assertion")
+    
+    if grant_type != "refresh_token":
+        return jsonify({
+            "error": "unsupported_grant_type",
+            "error_description": "Unsupported grant type"
+        }), HTTPStatus.BAD_REQUEST
+    
+    ## Validate assertion - authorization of client
+    result, info = validate_client_assertion(client_assertion_type, client_assertion)
+    if result is not True:
+        # fail => result: error_msg; info: statu
+        # s code
+        return result, info
+    
+    ## Validate client, redirect_uri, refresh_token
+    payload = info
+    client_id = payload["iss"]
+    
+    client = execute_sql(''' 
+                SELECT * FROM clients
+                WHERE id=%s            
+            ''', (client_id, ), True)
+    
+    if client is False:
+        return jsonify({
+            "error": "internal_error",
+            "error_description": "Internal server error"
+        }), HTTPStatus.INTERNAL_SERVER_ERROR
+    if client is None:
+        return jsonify({
+            "error": "invalid_client", 
+            "error_description": "Not found client"
+        }), HTTPStatus.NOT_FOUND
+
+    client_uri_list = execute_sql('''
+                SELECT * FROM client_uri
+                WHERE client_id=%s                 
+            ''', (client_id, ),False, True)
+    redirect_uris = [p["redirect_uri"] for p in client_uri_list]
+    
+    print(f"Expected redirect_uris: {redirect_uris}")
+    print(f"Redirect_uri {redirect_uri}")
+
+    if redirect_uri not in redirect_uris:
+        return jsonify({
+            "error": "invalid_redirect_uri",
+            "error_description": "Unaccepted redirect uri"
+        }), HTTPStatus.BAD_REQUEST
+        
+    saved_token = execute_sql(''' 
+                SELECT * FROM refresh_tokens
+                WHERE token=%s AND client_id=%s
+            ''', (refresh_token, client_id), True)
+    
+    if saved_token is False:
+        return jsonify({
+            "error": "internal_error",
+            "error_description": "Internal server erro"
+        }), HTTPStatus.INTERNAL_SERVER_ERROR
+    if saved_token is None:
+        return jsonify({
+            "error": "invalid_refresh_token",
+            "error_description": "Not found refresh token"
+        }), HTTPStatus.BAD_REQUEST
+    print(f"### Saved token: {saved_token}")    
+    
+    if saved_token["revoked"] == "1":
+        return jsonify({
+            "error": "invalid_token",
+            "error_description": "Expired refresh token"
+        }), HTTPStatus.BAD_REQUEST
+    
+    if not is_valid_exp(saved_token["expires_at"]):
+        return jsonify({
+            "error": "expired_token",
+            "error_description": "Expired refresh token"
+        }), HTTPStatus.BAD_REQUEST
+        
+    user_id = saved_token["user_id"]
+    
+    conn = get_connection()
+    cursor = conn.cursor()  
+    try:
+        new_id_token = generate_id_token(user_id, client_id)
+
+        # Insert access token
+        new_access_token = secrets.token_urlsafe(32)
+        new_access_exp = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(tzinfo=None)
+        cursor.execute(
+            """INSERT INTO access_tokens(token, client_id, user_id, scope, expires_at, revoked)
+            VALUES(%s,%s,%s,%s,%s,%s)""",
+            (new_access_token, client_id, user_id, "openid profile", new_access_exp, False)
+        )
+
+        # Insert refresh token
+        new_refresh_token = secrets.token_urlsafe(32)
+        new_refresh_exp = (datetime.now(timezone.utc) + timedelta(days=30)).replace(tzinfo=None)
+        cursor.execute(
+            """INSERT INTO refresh_tokens(token, client_id, user_id, expires_at, revoked)
+            VALUES(%s,%s,%s,%s,%s)""",
+            (new_refresh_token, client_id, user_id, new_refresh_exp, False)
+        )
+
+        # Insert session
+        cursor.execute(
+            """INSERT INTO user_sessions(id_token, access_token, refresh_token)
+            VALUES (%s,%s,%s)""",
+            (new_id_token, new_access_token, new_refresh_token)
+        )
+
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        print("DB error:", e)
+        return jsonify({
+            "error": "internal_error",
+            "error_description": "Internal server error"
+        }), HTTPStatus.INTERNAL_SERVER_ERROR
+
+    finally:
+        cursor.close()
+        conn.close()
+    
+    response_data = {
+        "token_type": "Bearer",
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token,
+        "expires_in": 36000,
+        "id_token": new_id_token
+    }
+    
+    response = jsonify(response_data)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    
+    return response, HTTPStatus.OK
+
+
+def revoke_token(req):
+    req_body = req.get_json()
+    required_params = ["id_token", "redirect_id"]
+    
+    missing = [p for p in required_params if not req_body[p]]
+    if len(missing) > 0:
+        return jsonify({
+            "error": "bad_request",
+            "error_description": f"Requires {' '.join(missing)} in request body"
+        }), HTTPStatus.BAD_REQUEST
+    
+    id_token = req_body["id_token"]
+    payload = jwt.decode(id_token, options={"verify_signature": False})
+    
+    found_session = execute_sql(''' 
+                SELECT * FROM user_sessions
+                WHERE id_token=%s                    
+            ''', (id_token, ), True)
+    
+    if found_session is False:
+        return jsonify({
+            "error": "internal_error",
+            "error_description": "Internal server erroR"
+        }), HTTPStatus.INTERNAL_SERVER_ERROR
+    if found_session is None:
+        return jsonify({
+            "error": "invalid_id_token", 
+            "error_description": "Not found id_token"
+        }), HTTPStatus.BAD_REQUEST
+        
+    access_token = found_session["access_token"]
+    refresh_token =  found_session["refresh_token"]
+        
+    ## Accepted: revoke refresh_token and access_token
+    check1 = execute_sql(''' 
+                UDPATE access_tokens
+                SET revoked=True
+                WHERE token=%s            
+            ''', (access_token,))
+    check2 = execute_sql(''' 
+                UDPATE refresh_tokens
+                SET revoked=True
+                WHERE token=%s            
+            ''', (refresh_token,))
+    
+    if check1 is False or check2 is False:
+        return jsonify({
+            "error": "internal_error",
+            "error_description": "Internal server erroR"
+        }), HTTPStatus.INTERNAL_SERVER_ERROR
+        
+    return jsonify({
+        "msg": "Revoke successfully"
+    }), HTTPStatus.ACCEPTED

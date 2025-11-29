@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from services.auth_service import register_user, authorization, exchange_token, check_token_expiration, get_user_info
+from services.auth_service import register_user, authorization, exchange_token, get_user_info, refresh_token
 
 from http import HTTPStatus
 
@@ -24,3 +24,7 @@ def post_exchange_token():
 @auth_bp.get("/user-info")
 def user_info():
     return get_user_info(request)
+
+@auth_bp.get("/refresh-token")
+def request_refresh_token():
+    return refresh_token(request)
