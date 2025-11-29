@@ -6,7 +6,7 @@ SERVICE_PORT = 4000  # Chạy trên cổng 5002
 SERVICE_URL = f"http://localhost:{SERVICE_PORT}"
 
 # Cấu hình kết nối tới SSO Server
-SSO_SERVER_URL = "http://localhost:5001" 
+SSO_SERVER_URL = "http://localhost:5000" 
 CLIENT_ID = "lms_service_client"
 
 app = Flask(__name__)

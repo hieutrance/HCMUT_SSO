@@ -25,7 +25,7 @@ def home_page():
 @app.route('/mybk')
 @app.route('/dashboard')
 def mybk_dashboard():
-
+    print(f"VALUE OF is_logged_in {session.get('is_logged_in')}")
     if not session.get('is_logged_in'):
         # Chưa đăng nhập -> Chuyển hướng sang route login để bắt đầu SSO
         return redirect(url_for('login_page'))
