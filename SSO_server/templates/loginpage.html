@@ -5,40 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - HCMUT SSO</title>
-    <!-- CSS cho SSO Server -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style_server.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/png">
-    
-    <!-- CSS để căn giữa nút -->
-    <style>
-        .sso-button-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .btn-sso {
-            width: 100%;
-            padding: 12px 0;
-            margin-top: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: white;
-            background-color: #003366; /* Màu xanh đậm, như nút submit */
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        .btn-sso:hover {
-            background-color: #001f40;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://www.hcmut.edu.vn/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
 
     <div class="form-container">
         <div class="logo-header">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="HCMUT Logo" class="logo">
+            <img src="logo.png" alt="HCMUT Logo" class="logo">
             <div class="logo-text">
                 <strong>HCMUT SSO</strong>
                 <span>by OIDC</span>
@@ -46,8 +21,7 @@
         </div>
         <h2 class="form-title">Đăng nhập</h2>
 
-
-        <form id="loginForm" action="{{ url_for('login_page_sso') }}" method="POST">
+        <form action="#" method="POST">
             <div class="form-group">
                 <label for="username">Tên tài khoản</label>
                 <input type="text" id="username" name="username" required>
@@ -56,21 +30,16 @@
                 <label for="password">Mật khẩu</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button id="ssoLoginButton" type="submit" class="btn-submit">Đăng nhập</button>
+            <button type="submit" class="btn-submit">Đăng nhập</button>
         </form>
 
         <div class="form-footer">
-            <a href="{{ url_for('forget_password_page') }}">Quên mật khẩu?</a>
-            <a href="{{ url_for('register_page') }}">Chưa có tài khoản? Đăng ký</a>
+            <a href="forgetpassword.html">Quên mật khẩu?</a>
+            <a href="register.html">Chưa có tài khoản? Đăng ký</a>
         </div>
-    </div><!DOCTYPE html>
-<html lang="vi">
+    </div>
 
-    <script>
-
-        window.STATIC_IMAGE_URL = "{{ url_for('static', filename='images') }}/";
-    </script>
-    
-    <script src="{{ url_for('static', filename='script_server.js') }}"></script>
+    <script src="script.js" defer></script>
 </body>
+
 </html>
