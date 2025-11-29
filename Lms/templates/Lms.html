@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS - Hệ thống Học tập</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .service-content {
+            background-color: #e6f7ff;
+            border-left: 5px solid #007bff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .sidebar {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li a {
+            display: block;
+            padding: 10px 0;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed #cce0ff;
+        }
+        .sidebar ul li a:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Thanh Navigation -->
+    <nav class="user-nav nav-service">
+        <div class="nav-links">
+            <a href="{{ url_for('home_page') }}">Trang Chủ</a>
+            
+            <!-- SỬA LỖI 1: Đổi lms_service thành lms_dashboard -->
+            <a href="{{ url_for('lms_dashboard') }}" class="active">LMS</a>
+            
+            <!-- SỬA LỖI 2: Dùng link tuyệt đối sang MyBK (Port 3000) -->
+            <a href="http://localhost:3000/mybk">MyBK</a>
+        </div>
+        <div class="user-info">
+            Xin chào, <strong>{{ username }}</strong>!
+            <a href="{{ url_for('logout') }}" class="btn-logout">Đăng xuất</a>
+        </div>
+    </nav>
+
+    <div class="service-wrapper">
+        <div class="sidebar">
+            <h2>Khóa học</h2>
+            <ul>
+                <li><a href="#">Mật mã và An ninh mạng</a></li>
+                <li><a href="#">Lập trình Web nâng cao</a></li>
+                <li><a href="#">Phân tích Dữ liệu</a></li>
+                <li><a href="#">Kỹ năng mềm</a></li>
+            </ul>
+        </div>
+
+        <main class="service-main">
+            <h1>Hệ thống Quản lý Học tập (LMS)</h1>
+            <p>Xin chào, <strong>{{ username }}</strong>. Bạn đã đăng nhập thành công vào LMS qua cổng SSO.</p>
+            
+            <div class="service-content">
+                <h3>Thông báo mới nhất</h3>
+                <p><strong>Ngày 14/11:</strong> Bài tập lớn Mật mã đã được cập nhật yêu cầu. Vui lòng kiểm tra đề bài.</p>
+                <p><strong>Ngày 10/11:</strong> Lịch học bù môn Lập trình Web được thông báo trên hệ thống.</p>
+            </div>
+            
+            <a href="{{ url_for('home_page') }}" class="back-link mt-5 block text-center">&larr; Quay về Trang chủ</a>
+        </main>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng MyBK</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Đăng ký -->
+    <div class="top-right-links">
+        {% if username == 'Khách' %}
+            <a href="{{ url_for('register_page') }}" class="btn-action">Đăng ký</a>
+        {% else %}
+            <span class="welcome-text">Xin chào, <strong>{{ username }}</strong></span>
+            <a href="{{ url_for('logout') }}" class="btn-logout-top">Đăng xuất</a>
+        {% endif %}
+    </div>
+
+    <!-- Container với nền MyBK -->
+    <div class="main-container bg-mybk">
+        <div class="overlay"></div> <!-- Lớp phủ làm tối nền -->
+        
+        <div class="content-box">
+            <h1 class="title-service">MyBK</h1>
+            <p class="subtitle">Cổng thông tin Sinh viên Bách Khoa</p>
+            
+            {% if username == 'Khách' %}
+                <a href="{{ url_for('login_page') }}" class="btn-service">Đăng nhập</a>
+            {% else %}
+                <a href="{{ url_for('mybk_dashboard') }}" class="btn-service">Truy cập Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

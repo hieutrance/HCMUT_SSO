@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống LMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Đăng ký -->
+    <div class="top-right-links">
+        {% if username == 'Khách' %}
+            <a href="{{ url_for('register_page') }}" class="btn-action">Đăng ký</a>
+        {% else %}
+            <span class="welcome-text">Xin chào, <strong>{{ username }}</strong></span>
+            <a href="{{ url_for('logout') }}" class="btn-logout-top">Đăng xuất</a>
+        {% endif %}
+    </div>
+
+
+    <div class="main-container bg-lms">
+        <div class="overlay"></div> 
+        
+        <div class="content-box">
+            <h1 class="title-service">LMS</h1>
+            <p class="subtitle">Hệ thống hỗ trợ giảng dạy và học tập</p>
+            
+            {% if username == 'Khách' %}
+                <a href="{{ url_for('login_page') }}" class="btn-service">Đăng nhập</a>
+            {% else %}
+                <a href="{{ url_for('lms_dashboard') }}" class="btn-service">Vào lớp học</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
