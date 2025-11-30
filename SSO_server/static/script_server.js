@@ -33,17 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(changeBackground, intervalTime);
 });
 const params = new URLSearchParams(window.location.search);
-    document.getElementById('redirect_uri').value = params.get('redirect_uri') || '';
-    document.getElementById('scope').value = params.get('scope') || '';
-    document.getElementById('client_id').value = params.get('client_id') || '';
-
-    
+document.getElementById('redirect_uri').value = params.get('redirect_uri') || '';
+document.getElementById('scope').value = params.get('scope') || '';
+document.getElementById('client_id').value = params.get('client_id') || '';
+document.getElementById('redirect_uri').value = params.get('redirect_uri')
 
 const loginForm = document.getElementById('login-form')
-loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    let username = document.getElementById('username').value;
-    let password = document.getElementById('password').value;
-
-    
-})

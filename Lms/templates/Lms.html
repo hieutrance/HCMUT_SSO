@@ -41,13 +41,10 @@
 <body>
     <nav class="user-nav nav-service">
         <div class="nav-links">
-            <a href="{{ url_for('home_page') }}">Trang Chủ</a>
-            <a href="{{ url_for('lms_service') }}" class="active">LMS</a>
-            <a href="{{ url_for('mybk_service') }}">MyBK</a>
         </div>
         <div class="user-info">
             Xin chào, <strong>{{ username }}</strong>!
-            <a href="{{ url_for('logout_sso') }}" class="btn-logout">Đăng xuất</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Đăng xuất</a>
         </div>
     </nav>
 

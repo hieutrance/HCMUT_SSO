@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyBK - Cổng thông tin Sinh viên</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_client.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .service-content {
             background-color: #fff2e6;
@@ -33,13 +33,9 @@
 <body>
     <nav class="user-nav nav-service">
         <div class="nav-links">
-            <a href="{{ url_for('home_page') }}">Trang Chủ</a>
-            <a href="{{ url_for('lms_service') }}">LMS</a>
-            <a href="{{ url_for('mybk_service') }}" class="active">MyBK</a>
-        </div>
+        </div> 
         <div class="user-info">
             Xin chào, <strong>{{ username }}</strong>!
-            <a href="{{ url_for('logout_sso') }}" class="btn-logout">Đăng xuất</a>
         </div>
     </nav>
 
@@ -73,6 +69,6 @@
             <a href="{{ url_for('home_page') }}" class="back-link mt-5 block text-center">&larr; Quay về Trang chủ</a>
         </main>
     </div>
-    <script src="{{url_for('static', filename='script.js')}}" defer> </script>
+    <script src="{{url_for('static', filename='script_mybk.js')}}" defer> </script>
 </body>
 </html>
