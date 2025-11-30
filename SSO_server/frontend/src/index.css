@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%; /* Cần thiết để các phần tử mở rộng */
+  width: 100%; 
+  margin: 0; 
+  padding: 0; 
+}
+body {
+  @apply relative min-h-screen flex items-center justify-center;
+}
+
+body::before {
+  content: '';
+  @apply fixed top-0 left-0 w-full h-full z-[-2] bg-cover bg-center;
+  background-image: url('./assets/images/bg1.jpg');
+}
+
+body::after {
+  content: '';
+  @apply fixed top-0 left-0 w-full h-full z-[-1] bg-cover bg-center;
+  background-image: url('./assets/images/bg2.jpg');
+  animation: fadeSlideshow 8s ease-in-out infinite;
+}
+
+@keyframes fadeSlideshow {
+  0%,40% { opacity: 0; }
+  50%,90% { opacity: 1; }
+  100% { opacity: 0; }
+}
