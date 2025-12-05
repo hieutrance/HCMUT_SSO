@@ -29,3 +29,6 @@ def user_info():
 def request_refresh_token():
     return refresh_token(request)
 
+@auth_bp.post("/revoke")
+def request_revoke():
+    return revoke_token(request)

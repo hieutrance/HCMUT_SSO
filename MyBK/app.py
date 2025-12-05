@@ -4,6 +4,8 @@ from flask import Flask, render_template, redirect, url_for, session, request
 import base64, secrets
 from datetime import datetime, timezone, timedelta
 import time, jwt
+import uuid
+
 import requests
 load_dotenv()
 from db import get_connection

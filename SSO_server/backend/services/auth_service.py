@@ -47,7 +47,7 @@ def authorization(req):
     
     if session is not None and redirect_uri is not None:
         saved_session = execute_sql(
-            ''' SELECT * FROM idtoken_session
+            ''' SELECT * FROM sso_session
             WHERE browser_session=%s
             ''', (session, ), True
         )
@@ -168,9 +168,9 @@ def authorization(req):
         )
         temp2 = execute_sql(
             ''' 
-            INSERT INTO idtoken_session(user_id, browser_session, expires_at)
-            VALUES (%s, %s,%s)
-            ''', (user["id"], browser_session, browser_session_exp)
+            INSERT INTO sso_session(user_id, browser_session, authentication_code, expires_at)
+            VALUES (%s, %s, %s,%s)
+            ''', (user["id"], browser_session, authentication_code, browser_session_exp)
         )
         
         if not temp or not temp2:
@@ -261,6 +261,16 @@ def exchange_token(req):
     user_id = db_authorization_code["user_id"]
     client_id = db_authorization_code["client_id"]
     
+    saved_session = execute_sql(''' 
+            SELECT * FROM sso_session
+            WHERE authentication_code=%s                         
+        ''', (authorization_code, ), True)
+    
+    session_id = None
+    if saved_session is not None:
+        session_id = saved_session["id"]
+
+    
     conn = get_connection()
     cursor = conn.cursor()  
     try:
@@ -282,20 +292,14 @@ def exchange_token(req):
             VALUES(%s,%s,%s,%s,%s)""",
             (refresh_token, client_id, user_id, refresh_exp, False)
         )
-        # Insert 
-        cursor.execute(
-            """INSERT INTO user_sessions(id_token, access_token, refresh_token)
-            VALUES (%s,%s,%s)""",
-            (id_token, access_token, refresh_token)
-        )
-        if browser_session:
+        # Insert session
+        if session_id is not None:
             cursor.execute(
-                """UPDATE idtoken_session
-                   SET id_token=%s 
-                   WHERE browser_session=%s AND id_token IS NULL
-                """,
-                (id_token, browser_session)
+                """INSERT INTO user_sessions(session_id, access_token, refresh_token)
+                VALUES (%s,%s,%s)""",
+                (session_id, access_token, refresh_token)
             )
+        
         conn.commit()
     except Exception as e:
         conn.rollback()
@@ -397,10 +401,15 @@ def get_user_info(req):
             "error_description": "Unauthorized"
         }), HTTPStatus.UNAUTHORIZED
     expires_at = saved_token["expires_at"].replace(tzinfo=timezone.utc)
-    if expires_at <= datetime.now(timezone.utc) or saved_token["revoked"]:
+    if expires_at <= datetime.now(timezone.utc):
         return jsonify({
             "error": "unauthorized",
             "error_description": "expired token"
+        }), HTTPStatus.UNAUTHORIZED
+    if saved_token["revoked"]:
+        return jsonify({
+            "error": "unauthorized",
+            "error_description": "revoked token"
         }), HTTPStatus.UNAUTHORIZED
     user_id = saved_token["user_id"]
     scopes = saved_token["scope"].split()
@@ -519,6 +528,14 @@ def refresh_token(req):
         }), HTTPStatus.BAD_REQUEST
         
     user_id = saved_token["user_id"]
+    saved_user_session = execute_sql(''' 
+                SELECT * FROM  user_sessions
+                WHERE refresh_token=%s                        
+            ''', (refresh_token, ))
+    session_id = None
+    if saved_user_session:
+        session_id = saved_user_session["session_id"]
+    
     conn = get_connection()
     cursor = conn.cursor()  
     try:
@@ -540,11 +557,12 @@ def refresh_token(req):
             (new_refresh_token, client_id, user_id, new_refresh_exp, False)
         )
         # Insert session
-        cursor.execute(
-            """INSERT INTO user_sessions(id_token, access_token, refresh_token)
-            VALUES (%s,%s,%s)""",
-            (new_id_token, new_access_token, new_refresh_token)
-        )
+        if session_id:
+            cursor.execute(
+                """INSERT INTO user_sessions(session_id, access_token, refresh_token)
+                VALUES (%s,%s,%s)""",
+                (session_id, new_access_token, new_refresh_token)
+            )
         conn.commit()
 
     except Exception as e:
@@ -573,7 +591,7 @@ def refresh_token(req):
 
 def revoke_token(req):
     req_body = req.get_json()
-    required_params = ["browser_session", "redirect_id"]
+    required_params = ["browser_session", "redirect_uri"]
     
     missing = [p for p in required_params if not req_body[p]]
     if len(missing) > 0:
@@ -585,7 +603,7 @@ def revoke_token(req):
     session = req_body["browser_session"]
     
     found_session = execute_sql(''' 
-                SELECT * FROM idtoken_session
+                SELECT * FROM sso_session
                 WHERE browser_session=%s                    
             ''', (session, ), True)
     
@@ -599,34 +617,35 @@ def revoke_token(req):
             "error": "invalid_id_token", 
             "error_description": "Not found id_token"
         }), HTTPStatus.BAD_REQUEST
-    id_token = found_session["id_token"]
+    session_id = found_session["id"]
     
-    saved_token = execute_sql(''' 
+    saved_tokens = execute_sql(''' 
                 SELECT * FROM user_sessions
-                WHERE id_token=%s                    
-            ''', (id_token, ), True)
-    
-    access_token = saved_token["access_token"]
-    refresh_token =  saved_token["refresh_token"]
+                WHERE session_id=%s                    
+            ''', (session_id, ), False, True)
+    print(f"Saved tokens: {saved_tokens}")
+
+    for token in saved_tokens:
+        access_token = token["access_token"]
+        refresh_token = token["refresh_token"]
+        ## Accepted: revoke refresh_token and access_token
+        check1 = execute_sql(''' 
+                    UPDATE access_tokens
+                    SET revoked=True
+                    WHERE token=%s            
+                ''', (access_token,))
+        check2 = execute_sql(''' 
+                    UPDATE refresh_tokens
+                    SET revoked=True
+                    WHERE token=%s            
+                ''', (refresh_token,))
         
-    ## Accepted: revoke refresh_token and access_token
-    check1 = execute_sql(''' 
-                UDPATE access_tokens
-                SET revoked=True
-                WHERE token=%s            
-            ''', (access_token,))
-    check2 = execute_sql(''' 
-                UDPATE refresh_tokens
-                SET revoked=True
-                WHERE token=%s            
-            ''', (refresh_token,))
-    
-    if check1 is False or check2 is False:
-        return jsonify({
-            "error": "internal_error",
-            "error_description": "Internal server erroR"
-        }), HTTPStatus.INTERNAL_SERVER_ERROR
-        
+        if check1 is False or check2 is False:
+            return jsonify({
+                "error": "internal_error",
+                "error_description": "Internal server erroR"
+            }), HTTPStatus.INTERNAL_SERVER_ERROR
+              
     return jsonify({
         "msg": "Revoke successfully"
     }), HTTPStatus.ACCEPTED

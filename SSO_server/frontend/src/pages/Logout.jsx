@@ -1,18 +1,43 @@
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
 import logo from "../assets/images/logo.png";
 import axios from "axios";
+const apiUrl = "http://localhost:5001/api";
+
+
+function getCookie(name) {
+  const value = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(name + "="));
+  return value ? value.split("=")[1] : null;
+}
+
 
 export default function LogoutPage() {
+  const [isLoading, setIsLoading] = useState(false)
 
-     useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect");
 
     const allCookies = Cookies.get();
+    let browser_session = getCookie("browser_session")
     Object.keys(allCookies).forEach((cookieName) => {
       Cookies.remove(cookieName, { path: "/" });
     });
+    
+    try {
+      setIsLoading(true);
+      const response = axios.post(`${apiUrl}/auth/revoke`, {
+        "redirect_uri": redirect,
+        "browser_session": browser_session
+      })
+    } catch  (error) {
+      console.log("Error in revoking session");
+    } finally {
+      setIsLoading(false);
+    }
 
     if (redirect) {
       window.location.href = redirect;
@@ -21,11 +46,9 @@ export default function LogoutPage() {
     }
   }, []);
 
-    
   return (
     <div className="min-h-screen flex items-center justify-center  px-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full text-center">
-        
         <div className="flex flex-col items-center mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -50,8 +73,6 @@ export default function LogoutPage() {
         <p className="text-gray-600 mb-6">
           Phiên đăng nhập của bạn đã kết thúc. Hẹn gặp lại bạn lần sau nhé!
         </p>
-
-
       </div>
     </div>
   );
