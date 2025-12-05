@@ -1,74 +1,164 @@
 <!DOCTYPE html>
 <html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyBK - Dashboard Sinh viên</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyBK - Cổng thông tin Sinh viên</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .service-content {
-            background-color: #fff2e6;
-            border-left: 5px solid #ff9900;
-            padding: 25px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
-        .info-card {
-            background-color: #ffffff;
-            border: 1px solid #ffcc80;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .info-card h4 {
-            color: #e67300;
-            margin-top: 0;
-        }
-    </style>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <i class="fas fa-university"></i> MyBK Portal
+      </div>
 
-</head>
+      <div class="navbar-right">
+        <a href="{{ url_for('home_page') }}" class="nav-link">
+          <i class="fas fa-home"></i> <span>Trang chủ</span>
+        </a>
 
-<body>
-    <nav class="user-nav nav-service">
-        <div class="nav-links">
-        </div> 
-        <div class="user-info">
-            Xin chào, <strong>{{ username }}</strong>!
+        <div class="user-profile">
+          <i class="fas fa-user-circle fa-lg"></i>
+          <span>{{ username }}</span>
         </div>
+
+        <a href="{{ url_for('logout') }}" class="btn-logout-nav">
+          <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </a>
+      </div>
     </nav>
 
-    <!-- Nội dung chính -->
-    <div class="service-wrapper">
-        <main class="service-main full-width">
-            <h1>Cổng thông tin Sinh viên (MyBK)</h1>
-            <p>Xin chào, **{{ username }}**. Bạn đã đăng nhập thành công vào MyBK qua cổng SSO.</p>
-            
-            <div class="info-card">
-                <h4>Thông tin Cá nhân</h4>
-                <p><strong>Mã số sinh viên:</strong> 2211020 </p>
-                <p><strong>Email:</strong> {{ user_id }}@hcmut.edu.vn</p>
-            </div>
+    <div class="container">
+      <main>
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="far fa-calendar-alt"></i> Thời khóa biểu (HK241)</h3>
+          </div>
+          <div style="overflow-x: auto">
+            <table class="timetable">
+              <thead>
+                <tr>
+                  <th>Tiết</th>
+                  <th>Thứ 2</th>
+                  <th>Thứ 3</th>
+                  <th>Thứ 4</th>
+                  <th>Thứ 5</th>
+                  <th>Thứ 6</th>
+                  <th>Thứ 7</th>
+                  <th>CN</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for period in range(1, 13) %}
+                <tr>
+                  <td><strong>{{ period }}</strong></td>
 
-            <div class="info-card">
-                <h4>Kết quả Học tập (Học kỳ Hiện tại)</h4>
-                <p><strong>Điểm Trung bình (GPA):</strong> 3.6/4.0</p>
-                <p><strong>Số tín chỉ đã đăng ký:</strong> 17</p>
-            </div>
+                  {% for day in range(2, 9) %} {% set slot =
+                  timetable_map.get((day, period)) %} {% if slot %}
+                  <td rowspan="{{ slot.duration }}">
+                    <div class="subject-slot">
+                      <div style="font-weight: bold">{{ slot.name }}</div>
+                      <div style="font-size: 0.8rem">{{ slot.code }}</div>
+                      <div style="color: #d63384">{{ slot.room }}</div>
+                    </div>
+                  </td>
+                  {% else %} {% set ns = namespace(skipped=False) %} {% for
+                  prev_period in range(1, period) %} {% set prev_slot =
+                  timetable_map.get((day, prev_period)) %} {% if prev_slot and
+                  (prev_period + prev_slot.duration > period) %} {% set
+                  ns.skipped = True %} {% endif %} {% endfor %} {% if not
+                  ns.skipped %}
+                  <td></td>
+                  {% endif %} {% endif %} {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            <div class="service-content">
-                <h3>Các chức năng chính</h3>
-                <ul>
-                    <li>Đăng ký Môn Học</li>
-                    <li>Thời khóa biểu</li>
-                    <li>Hỗ trợ trực tuyến</li>
-                </ul>
-            </div>
-            
-            <a href="{{ url_for('home_page') }}" class="back-link mt-5 block text-center">&larr; Quay về Trang chủ</a>
-        </main>
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-book"></i> Danh sách môn học</h3>
+          </div>
+          <ul class="course-list">
+            {% if course_list %} {% for course in course_list %}
+            <li class="course-item">
+              <div class="course-info">
+                <h5>{{ course.code }} - {{ course.name }}</h5>
+                <div class="course-meta">
+                  <i class="fas fa-chalkboard-teacher"></i> {{
+                  course.teacher_name }} | <strong>Nhóm:</strong> {{
+                  course.group_name }} | <strong>TC:</strong> {{ course.credits
+                  }}
+                </div>
+              </div>
+              <span
+                class="badge"
+                style="
+                  color: green;
+                  background: #e6fffa;
+                  padding: 4px 8px;
+                  border-radius: 4px;
+                "
+                >Đang học</span
+              >
+            </li>
+            {% endfor %} {% else %}
+            <p style="padding: 10px; color: #666">Chưa đăng ký môn học nào.</p>
+            {% endif %}
+          </ul>
+        </div>
+      </main>
+
+      <aside>
+        <div class="card">
+          <div class="card-header">
+            <h3>Thông tin</h3>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Username:</span> {{username}}
+          </div>
+          <div class="info-row">
+            <span class="info-label">Email:</span> {{email}}
+          </div>
+          <div class="info-row">
+            <span class="info-label">Khoa:</span> KH&KT Máy tính
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Lối tắt</h3>
+          </div>
+          <a href="#" class="action-btn"
+            ><i class="fas fa-calendar-check"></i> Đăng ký môn học</a
+          >
+          <a href="#" class="action-btn"
+            ><i class="fas fa-file-invoice-dollar"></i> Thanh toán BKPay</a
+          >
+          <a href="#" class="action-btn"
+            ><i class="fas fa-print"></i> In bảng điểm</a
+          >
+
+          <a href="{{ url_for('logout') }}" class="sidebar-logout">
+            <i class="fas fa-power-off"></i> Đăng xuất
+          </a>
+        </div>
+      </aside>
     </div>
-    <script src="{{url_for('static', filename='script_mybk.js')}}" defer> </script>
-</body>
+
+    <script
+      src="{{url_for('static', filename='script_mybk.js')}}"
+      defer
+    ></script>
+  </body>
 </html>

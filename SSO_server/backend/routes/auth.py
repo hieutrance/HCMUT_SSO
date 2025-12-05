@@ -25,7 +25,7 @@ def post_exchange_token():
 def user_info():
     return get_user_info(request)
 
-@auth_bp.get("/refresh-token")
+@auth_bp.post("/refresh-token")
 def request_refresh_token():
     return refresh_token(request)
 

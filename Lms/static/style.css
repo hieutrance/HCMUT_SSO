@@ -169,7 +169,6 @@ body {
     margin-bottom: 45px;
 }
 
-/* --- 4. Main Button --- */
 .btn-service {
     display: inline-block;
     padding: 16px 45px;
@@ -194,7 +193,6 @@ body {
 }
 
 
-/* Animation */
 @keyframes fadeInUp {
     from {
         opacity: 0;

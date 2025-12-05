@@ -8,7 +8,7 @@ import uuid
 
 import requests
 load_dotenv()
-from db import get_connection
+from db import get_connection, execute_sql
 
 SERVICE_PORT = 3000 
 SERVICE_URL = f"http://localhost:{SERVICE_PORT}"
@@ -30,14 +30,84 @@ def home_page():
     }
     return render_template('Homepage.html', **user_info)
 
-
 @app.route('/dashboard')
 def mybk_dashboard():
-    print(f"VALUE OF is_logged_in {session.get('is_logged_in')}")
+    # 1. Kiểm tra đăng nhập cơ bản
     if not session.get('is_logged_in'):
         return redirect(url_for('login_page'))
     
-    return render_template('Mybk.html', username=session.get('username'))
+    # Lấy token từ session
+    mybk_token = session.get("mybk_token") 
+    studentID = session.get("studentID") 
+    
+    if not mybk_token:
+        return redirect(url_for('login_page'))
+
+    # 2. Lấy User ID từ bảng tokens
+    saved_token = execute_sql(''' 
+        SELECT user_id FROM tokens WHERE token=%s
+    ''', (mybk_token,), fetch_one=True) 
+    
+    if not saved_token:
+        session.clear()
+        return redirect(url_for('login_page'))
+        
+    user_id = saved_token["user_id"]
+    user  = execute_sql(''' 
+        SELECT * FROM users WHERE id=%s
+    ''', (user_id,), fetch_one=True) 
+    user_email = user["email"]
+
+    # 3. Lấy dữ liệu Thời khóa biểu & Môn học
+    query_schedule = '''
+        SELECT 
+            s.code, s.name, s.credits,
+            c.group_name, c.teacher_name,
+            sch.day_of_week, sch.start_period, sch.end_period, sch.room
+        FROM enrollments e
+        JOIN classes c ON e.class_id = c.id
+        JOIN subjects s ON c.subject_id = s.id
+        JOIN class_schedules sch ON c.id = sch.class_id
+        WHERE e.user_id = %s 
+        AND c.semester = 'HK241' -- Giả sử đang lấy HK hiện tại
+        ORDER BY sch.day_of_week, sch.start_period
+    '''
+    
+    # Giả sử hàm này trả về List of Dictionary
+    raw_schedules = execute_sql(query_schedule, (user_id,), False, True) 
+
+    # 4. Xử lý dữ liệu để vẽ bảng TKB dễ hơn
+    # Tạo một dictionary dạng: map[(thứ, tiết_bắt_đầu)] = {thông tin môn}
+    timetable_map = {}
+    course_list = [] # Danh sách môn học (để hiển thị ở cột bên phải)
+    seen_courses = set() # Để lọc trùng môn trong danh sách
+
+    if raw_schedules:
+        for row in raw_schedules:
+            # A. Xử lý cho bảng TKB
+            # Key là tuple (Thứ, Tiết bắt đầu).
+            key = (row['day_of_week'], row['start_period'])
+            timetable_map[key] = {
+                'name': row['name'],
+                'room': row['room'],
+                'code': row['code'],
+                'duration': row['end_period'] - row['start_period'] + 1 # Độ dài tiết học
+            }
+
+            # B. Xử lý cho danh sách môn học (loại bỏ trùng lặp nếu môn học nhiều buổi)
+            unique_key = row['code'] + row['group_name']
+            if unique_key not in seen_courses:
+                course_list.append(row)
+                seen_courses.add(unique_key)
+
+    # 5. Truyền dữ liệu sang HTML
+    return render_template('Mybk.html', 
+                           username=session.get('username'),
+                           fullname=session.get('fullname'),
+                           timetable_map=timetable_map,
+                           studentID=studentID,
+                           email=user_email,
+                           course_list=course_list)
 
 
 @app.route('/login')
@@ -117,7 +187,10 @@ def sso_callback():
         user_info = userinfo_response.json()
         username = user_info.get("username")
         fullname = user_info.get("fullname")
+        email = user_info.get("email")
         avatar = user_info.get("avatar")
+        studentID = user_info.get("student_id")
+        
         
         # Mở kết nối và bắt đầu transaction
         conn = get_connection()
@@ -135,9 +208,9 @@ def sso_callback():
 
                 # 2. Tạo user mới nếu không tồn tại
                 cursor.execute("""
-                    INSERT INTO users (id, username, fullname, avatar)
-                    VALUES (%s, %s, %s, %s)
-                """, (new_user_id, username, fullname, avatar))
+                    INSERT INTO users (id, username, fullname, avatar, email)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (new_user_id, username, fullname, avatar, email))
                 # Lấy ID của bản ghi vừa được tạo
                 user_id = new_user_id
             else:
@@ -179,6 +252,7 @@ def sso_callback():
         session['username'] = username
         session['is_logged_in'] = True
         session['mybk_token'] = mybk_token
+        session['studentID'] = studentID
         
         return redirect(url_for('mybk_dashboard'))
     

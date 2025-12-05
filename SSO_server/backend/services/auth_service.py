@@ -428,7 +428,6 @@ def get_user_info(req):
         response_data["username"] = user["username"]
         response_data["fullname"] = user["fullname"]
         response_data["avatar"] = user["avatar"]
-    if "email" in scopes:
         response_data["email"] = user["email"]
     if "address" in scopes:
         response_data["address"] = user["address"]
@@ -531,7 +530,7 @@ def refresh_token(req):
     saved_user_session = execute_sql(''' 
                 SELECT * FROM  user_sessions
                 WHERE refresh_token=%s                        
-            ''', (refresh_token, ))
+            ''', (refresh_token, ), True)
     session_id = None
     if saved_user_session:
         session_id = saved_user_session["session_id"]

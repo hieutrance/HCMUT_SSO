@@ -36,7 +36,7 @@ export default function AuthPage() {
       console.log("Browser session =", browser_session);
       console.log("Browser session exp =", browser_session_exp);
 
-      // Nếu không có session hoặc các tham số OAuth/OIDC cơ bản, dừng lại.
+      // Nếu không có session hoặc các tham số OIDC cơ bản, dừng lại.
       if (
         !browser_session ||
         !browser_session_exp ||
@@ -60,9 +60,6 @@ export default function AuthPage() {
         return;
       }
 
-      // Hiển thị thông báo đang tự động đăng nhập (nếu cần)
-      // setGeneralError("Đang tự động xác thực lại session...");
-
       // TỰ ĐỘNG GỌI API ĐỂ XÁC THỰC LẠI BẰNG SESSION ĐÃ LƯU
       try {
         setIsLoading(true);
@@ -84,7 +81,7 @@ export default function AuthPage() {
           browser_session_exp,
         } = response.data;
 
-        // Cập nhật lại session nếu server trả về session mới (refresh token)
+        // Cập nhật lại session nếu server trả về session mới
         if (new_browser_session) {
           const expiry = 3600 * 24 * 7;
           setSessionCookie("browser_session", new_browser_session, expiry);
@@ -95,12 +92,11 @@ export default function AuthPage() {
         // Chuyển hướng nếu nhận được mã ủy quyền
         if (authorization_code && n_redirect_uri) {
           window.location.href = `${n_redirect_uri}?code=${authorization_code}`;
-          return; // Ngăn chặn render form login
+          return; 
         } else {
           console.error(
             "Missing authorization_code or redirect_uri in auto-auth response. User must log in."
           );
-          // Để người dùng đăng nhập thủ công
         }
       } catch (error) {
         // Nếu API tự động xác thực thất bại, xóa session cũ và để người dùng đăng nhập thủ công.
@@ -158,10 +154,15 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
+      setIsLoading(true)
       const res = await axios.post(`${apiUrl}/auth/register`, form);
       setRegSuccess("Đăng ký thành công!");
     } catch (err) {
       setIsLoading(false);
+      
+      console.log("Lỗi đầy đủ:", err);
+      console.log("Dữ liệu server trả về:", err.response?.data);
+      alert(err.response?.data.msg);
       setRegError(err.response?.data?.error_description || "Lỗi đăng ký");
     } finally {
       setIsLoading(false)
@@ -176,6 +177,7 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
+      setIsLoading(true);
       const response = await axios.post(`${apiUrl}/auth/authenticate`, {
         response_type,
         scope,
@@ -201,6 +203,7 @@ export default function AuthPage() {
       );
 
       window.location.href = `${ruri}?code=${authentication_code}`;
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       if (error.response) {
@@ -213,6 +216,8 @@ export default function AuthPage() {
           setUsernameError(false);
         }
       }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -220,15 +225,15 @@ export default function AuthPage() {
   // JSX RETURN
   // =====================================================================
   return (
-    <div className="w-full h-full items-center justify-around">
+    <div className="w-full h-full">
       {isLoading && <LoadingSpinner />}
       <div className="bg-white p-12 w-5/12 mx-auto ">
         {/* Header */}
-        <div className="flex items-center text-blue-900 mb-6">
+        <div className="flex text-blue-900 mb-6">
           <img src={logo} alt="HCMUT Logo" className="w-10 h-10 mr-3" />
           <div className="flex flex-col">
             <strong className="text-2xl font-bold">HCMUT SSO</strong>
-            <span className="text-sm font-semibold text-blue-700">by OIDC</span>
+            <span className="text-sm font-semibold text-blue-700 text-left">by OIDC</span>
           </div>
         </div>
 
@@ -241,7 +246,8 @@ export default function AuthPage() {
         {/*                REGISTER FORM                               */}
         {/* ---------------------------------------------------------- */}
         {isRegister ? (
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-2 flex flex-col">
+            <label className="font-semibold text-left">Tên tài khoản</label>
             <input
               type="text"
               name="username"
@@ -252,6 +258,7 @@ export default function AuthPage() {
               required
             />
 
+            <label className="font-semibold text-left">Mật khẩu</label>
             <input
               type="password"
               name="password"
@@ -262,6 +269,7 @@ export default function AuthPage() {
               required
             />
 
+            <label className="font-semibold text-left">Họ và tên</label>
             <input
               type="text"
               name="fullname"
@@ -272,6 +280,7 @@ export default function AuthPage() {
               required
             />
 
+            <label className="font-semibold text-left">Email</label>
             <input
               type="email"
               name="email"
@@ -282,6 +291,7 @@ export default function AuthPage() {
               required
             />
 
+            <label className="font-semibold text-left">Số điện thoại</label>
             <input
               type="text"
               name="phone"
@@ -320,7 +330,7 @@ export default function AuthPage() {
             <input type="hidden" name="redirect_uri" value={redirect_uri} />
 
             <div className="flex flex-col">
-              <label className="font-semibold">Tên tài khoản</label>
+              <label className="font-semibold text-left">Tên tài khoản</label>
               <input
                 type="text"
                 className={`px-4 py-3 rounded-lg bg-blue-50 ${
@@ -339,7 +349,7 @@ export default function AuthPage() {
             </div>
 
             <div className="flex flex-col">
-              <label className="font-semibold">Mật khẩu</label>
+              <label className="font-semibold text-left">Mật khẩu</label>
               <input
                 type="password"
                 className={`px-4 py-3 rounded-lg bg-blue-50 ${
